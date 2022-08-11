@@ -1,0 +1,105 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Set;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+@Path("/users")
+public class UserResource{
+
+	private Set<User> Users = Collections.newSetFromMap(Collections.synchronizedMap(new LinkedHashMap<>()));
+	
+	@Path("/list")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public void connect(){
+
+	String jdbcURL = "jdbc:postgresql://localhost:5432/prva_baza";
+	String username = "postgres";
+	String password = "student";
+		
+	try{
+	Connection connection = DriverManager.getConnection(jdbcURL,username,password);
+	
+	
+	queryUsers(connection);
+	
+	connection.close();
+	}
+	catch(SQLException e){
+		System.out.println("Error in connecting to psql server");
+	}
+	
+	
+	}
+
+	public static void queryUsers(Connection con){
+	PreparedStatement stmt;
+	ResultSet rs;
+	String sql = "SELECT * FROM users";
+	try{
+		stmt = con.prepareStatement(sql);
+		rs = stmt.executeQuery();
+		while(rs.next()){
+		System.out.printf("%4d\t%s\t%s\t%s\t%s\n",
+		rs.getInt("id"),
+		rs.getString("first_name"),
+		rs.getString("last_name"),
+		rs.getString("organization"),
+		rs.getString("added"));
+
+		}
+		rs.close();
+		stmt.close();
+	    }	
+	catch(SQLException e){
+		e.printStackTrace();
+	}
+	}
+
+	public UserResource() {
+	Users.add(new User(4,"matteo","plisic","asseco(i hope lol)","2022-8-8 00:00:00"));
+	Users.add(new User(4,"marko","plisic","asseco(i hope lol)","2022-8-8 00:00:00"));
+	}
+
+	
+	
+	/*@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response list() {
+	return Response.ok(Users).build();
+	}*/	
+	@POST
+	public Set<User>add(User user){
+		Users.add(user);
+		return Users;
+	}
+	@DELETE
+	@Path("/{first_name}")
+	public Set<User> delete(User user){
+		Users.removeIf(existingUser->existingUser.first_name.contentEquals(user.first_name));
+		return Users;
+	}
+	
+}
+
+/*System.out.println("Uspjesno connected");
+	connection.close();
+	return "da";
+		
+	}catch(SQLException e){
+	System.out.println("Error in connecting to psql server");
+	e.printStackTrace();
+	return "ne";
+	*/
