@@ -23,5 +23,9 @@ public class BankJwtResource {
         return Response.ok(jwt).build();
         
     }
+
+    public void sendjwt(){
+           
+    }
     
 }

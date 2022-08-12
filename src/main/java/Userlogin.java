@@ -20,20 +20,25 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Cookie;
+
+//import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import io.netty.handler.codec.http.HttpStatusClass;
+import io.vertx.mutiny.ext.web.sstore.LocalSessionStore;
+
 
 
 @Path("/login")
-public class Userlogin{
+public class Userlogin {
     String jdbcURL = "jdbc:postgresql://localhost:5432/projektbaza";
     String username = "admin";
 	String password = "admin";
@@ -68,43 +73,29 @@ public class Userlogin{
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-     public String loginTheUser(LoginUser u){
-       /*  Iterator it = DBUsers.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry pair = (Map.Entry)it.next();
-            System.out.println(pair.getKey() + " " + pair.getValue());
-            it.remove();
-        }*/
+     public Response loginTheUser(LoginUser u){
+        
        
 
         if(u != null && DBUsers.containsKey(u.username) && (DBUsers.get(u.username).equals(u.password))){
-            
             String jwt = service.generatejwt();
-            HttpURLConnection connection = null;
-            Cookie cookie = new Cookie("jwtoken", jwt);
-            try {
-                URL url = new URL("http://localhost:8080");
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", 
-                "application/json");
-                connection.setRequestProperty("Authorization", "Bearer" + jwt);
-                connection.setDoOutput(true);
-          //      DataOutputStream wr = new DataOutputStream (
-           // connection.getOutputStream());
+        System.out.println(jwt);
+        return Response.ok(jwt).build();
             
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
             
-        return "logged in";
+            
+        
         }
 
 
-        return "username or password incorrect";
+        return  Response.ok("Wrong username or password").build();
+
         
     }
+      
+      
    
     
+
+
 }
