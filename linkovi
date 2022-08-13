@@ -1,1 +1,0 @@
-curl -X POST http://localhost:8080/fruits -H 'Content-Type: application/json' -d '{"name":"banan","description":"zuasa je"}
