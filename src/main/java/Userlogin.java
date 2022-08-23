@@ -78,7 +78,7 @@ public class Userlogin {
        
 
         if(u != null && DBUsers.containsKey(u.username) && (DBUsers.get(u.username).equals(u.password))){
-            String jwt = service.generatejwt();
+        String jwt = service.generatejwt();
         System.out.println(jwt);
         return Response.ok(jwt).build();
             
