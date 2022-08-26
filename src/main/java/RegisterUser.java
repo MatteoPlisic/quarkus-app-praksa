@@ -2,6 +2,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Base64;
+import java.util.Base64.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -23,9 +25,11 @@ public class RegisterUser {
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
     public String registermethod(User register){
-        String jdbcURL = "jdbc:postgresql://localhost:5432/prva_baza";
+        String jdbcURL = "jdbc:postgresql://localhost:5432/projektbaza";
         String username = "admin";
         String password = "admin";
+        Encoder encoder = Base64.getEncoder();
+        register.password = encoder.encodeToString(register.password.getBytes());
         register.first_name = "'" + register.first_name + "'";
         register.last_name = "'" + register.last_name + "'";
         register.organization = "'" + register.organization + "'";
@@ -51,8 +55,9 @@ public class RegisterUser {
             return "Succesful registration";
             
         } catch (SQLException e) {
+            e.printStackTrace();
             return "User with that username already exists";
-           // e.printStackTrace();
+            
         }
        // return "Failed registration";
     }

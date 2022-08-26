@@ -14,10 +14,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.HashMap;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 import javax.inject.Inject;
 
@@ -75,10 +78,11 @@ public class Userlogin {
 	@Produces(MediaType.APPLICATION_JSON)
      public Response loginTheUser(LoginUser u){
         
-       
-
+        Encoder encoder = Base64.getEncoder();
+        u.password = encoder.encodeToString(u.password.getBytes());
         if(u != null && DBUsers.containsKey(u.username) && (DBUsers.get(u.username).equals(u.password))){
-        String jwt = service.generatejwt();
+        
+            String jwt = service.generatejwt();
         System.out.println(jwt);
         return Response.ok(jwt).build();
             
